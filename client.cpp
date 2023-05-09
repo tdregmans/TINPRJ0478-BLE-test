@@ -157,12 +157,13 @@ void loop()
   
   timer = millis();
   
-  if (doConnect == true)
+  if (doConnect)
   {
     if (connectToServer())
     {
       Serial.println("We are now connected to the BLE Server.");
       int timeDifference = millis() - timer;
+      Serial.print("Measured time delay: ");
       Serial.println(timeDifference);
     } 
     else
@@ -172,21 +173,11 @@ void loop()
     doConnect = false;
   }
 
-  /* If we are connected to a peer BLE Server, update the characteristic each time we are reached
-     with the current time since boot */
-  if (connected)
-  {
-    String newValue = "Time since boot: " + String(millis()/2000);
-    Serial.println("Setting new characteristic value to \"" + newValue + "\"");
-    
-    /* Set the characteristic's value to be the array of bytes that is actually a string */
-    pRemoteCharacteristic->writeValue(newValue.c_str(), newValue.length());
-    /* You can see this value updated in the Server's Characteristic */
-  }
   else if(doScan)
   {
-    BLEDevice::getScan()->start(0);  // this is just example to start scan after disconnect, most likely there is better way to do it in arduino
+    BLEDevice::getScan()->start(0);
   }
   
-  delay(2000); /* Delay a second between loops */
+  // Delay a second between loops
+  delay(2000);
 }
